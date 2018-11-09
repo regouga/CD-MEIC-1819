@@ -12,14 +12,7 @@ import pandas as pd
 drop = ['class']
 
 
-
-
 training_dataset = pd.read_csv("aps_failure_training_set.csv", sep=',', header=14, engine='python')
-
-#import seaborn as sns
-#sns.boxplot(x=training_dataset['ad_000'])
-
-
 for i in range(len(drop)):
     training_dataset = training_dataset.drop(drop[i], axis=1)
 training_dataset.to_csv("base_aps_failure_training.csv", index=False)
