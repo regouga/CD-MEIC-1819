@@ -6,41 +6,57 @@ Created on Fri Nov  9 16:47:59 2018
 """
 
 import pandas as pd
-import missingno as msno
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+import seaborn as sns
+from scipy import stats
+import numpy as np
 
 training_dataset = pd.read_csv("aps_failure_training_set.csv", sep=',', header=14, engine='python')
 
-training_dataset['class'] = training_dataset['class'].replace('neg', 0)
-training_dataset['class'] = training_dataset['class'].replace('pos', 1)
-
-training_dataset.drop('ab_000', axis=1)
-training_dataset.drop('bm_000', axis=1)
-training_dataset.drop('bn_000', axis=1)
-training_dataset.drop('bo_000', axis=1)
-training_dataset.drop('bp_000', axis=1)
-training_dataset.drop('bq_000', axis=1)
-training_dataset.drop('br_000', axis=1)
-training_dataset.drop('cr_000', axis=1)
-
-training_dataset.to_csv("base_aps_failure_training.csv", index=False)
+training_dataset.to_csv("base_aps_failure_trainingCla.csv", index=False)
 
 
 test_dataset = pd.read_csv("aps_failure_test_set.csv", sep=',', header=14, engine='python')
 
-test_dataset['class'] = test_dataset['class'].replace('neg', 0)
-test_dataset['class'] = test_dataset['class'].replace('pos', 1)
+training_dataset = training_dataset.replace('neg', 0)
+training_dataset = training_dataset.replace('pos', 1)
+test_dataset = test_dataset.replace('neg', 0)
+test_dataset = test_dataset.replace('pos', 1)
+
+training_dataset = training_dataset.replace('na', -1)
+test_dataset = test_dataset.replace('na', -1)
+training_dataset = training_dataset.apply(pd.to_numeric)
+test_dataset = test_dataset.apply(pd.to_numeric)
+
+z1 = np.abs(stats.zscore(training_dataset))
+z2 = np.abs(stats.zscore(test_dataset))
+
+training_dataset_o = training_dataset[(z1 < 3).all(axis=1)]
+test_dataset_o = test_dataset[(z2 < 3).all(axis=1)]
+
+Q1 = training_dataset.quantile(0.25)
+Q3 = training_dataset.quantile(0.75)
+IQR = Q3 - Q1
+
+Q11 = test_dataset.quantile(0.25)
+Q33 = test_dataset.quantile(0.75)
+IQR1 = Q33 - Q11
+
+training_dataset = training_dataset[((training_dataset < (Q1 - 1.5 * IQR)) |(training_dataset > (Q3 + 1.5 * IQR))).any(axis=1)]
+test_dataset = test_dataset[((test_dataset < (Q11 - 1.5 * IQR1)) |(test_dataset > (Q33 + 1.5 * IQR1))).any(axis=1)]
+
+training_dataset = training_dataset.replace(-1, np.nan)
+test_dataset = test_dataset.replace(-1, np.nan)
 
 
-test_dataset.drop('ab_000', axis=1)
-test_dataset.drop('bm_000', axis=1)
-test_dataset.drop('bn_000', axis=1)
-test_dataset.drop('bo_000', axis=1)
-test_dataset.drop('bp_000', axis=1)
-test_dataset.drop('bq_000', axis=1)
-test_dataset.drop('br_000', axis=1)
-test_dataset.drop('cr_000', axis=1)
+columns = list(training_dataset.columns.values)
 
-test_dataset.to_csv("base_aps_failure_test.csv", index=False)
+for e in columns:
+    training_dataset[e] = training_dataset[e].fillna(training_dataset[e].mean())
+    test_dataset[e] = test_dataset[e].fillna(test_dataset[e].mean())
 
+training_dataset.to_csv("base_aps_failure_trainingCla.csv", index=False)
+test_dataset.to_csv("base_aps_failure_testCla.csv", index=False)
 
 
