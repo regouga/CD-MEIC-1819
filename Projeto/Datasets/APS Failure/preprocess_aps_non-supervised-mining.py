@@ -12,54 +12,44 @@ import seaborn as sns
 from scipy import stats
 import numpy as np
 
-#'class' is dropped because it is needed for classification, not unsupervised mining
-#'ab_000', 'bm_000', 'bn_000','bo_000', 'bp_000', 'bq_000', 'br_000', 'cr_000' are dropped because they have >65% missing values
-#
-drop = ['class']
+
 
 
 training_dataset = pd.read_csv("aps_failure_training_set.csv", sep=',', header=14, engine='python')
-training_dataset = training_dataset.replace('na', -1)
-
-for i in range(len(drop)):
-    training_dataset = training_dataset.drop(drop[i], axis=1)
-training_dataset.to_csv("base_aps_failure_training.csv", index=False)
-
-
 test_dataset = pd.read_csv("aps_failure_test_set.csv", sep=',', header=14, engine='python')
-for i in range(len(drop)):
-    test_dataset = test_dataset.drop(drop[i], axis=1)
-test_dataset.to_csv("base_aps_failure_test.csv", index=False)
 
-training_dataset = training_dataset.apply(pd.to_numeric)
+dataset = training_dataset.append(test_dataset)
+
+dataset = dataset.drop('class', axis=1)
+
+dataset = dataset.replace('na', -1)
+
+dataset = dataset.apply(pd.to_numeric)
+
+z = np.abs(stats.zscore(dataset))
+
+print(z)
+
+dataset_o = dataset[(z < 3).all(axis=1)]
 
 
 
-
-z = np.abs(stats.zscore(training_dataset))
-
-training_dataset_o = training_dataset[(z < 3).all(axis=1)]
-
-
-
-Q1 = training_dataset.quantile(0.25)
-Q3 = training_dataset.quantile(0.75)
+Q1 = dataset.quantile(0.25)
+Q3 = dataset.quantile(0.75)
 IQR = Q3 - Q1
 print(IQR)
 
-training_dataset = training_dataset[((training_dataset < (Q1 - 1.5 * IQR)) |(training_dataset > (Q3 + 1.5 * IQR))).any(axis=1)]
-training_dataset.to_csv("treino_filtrado_outliers.csv", index=False)
+dataset = dataset[((dataset < (Q1 - 1.5 * IQR)) |(dataset > (Q3 + 1.5 * IQR))).any(axis=1)]
 
 
-training_dataset = training_dataset.replace(-1, np.nan)
+dataset = dataset.replace(-1, np.nan)
 
 
 
-columns = list(training_dataset.columns.values)
+columns = list(dataset.columns.values)
 
 for e in columns:
-    print(e, training_dataset[e].mean())
-    training_dataset[e] = training_dataset[e].fillna(training_dataset[e].mean())
+    print(e, dataset[e].mean())
+    dataset[e] = dataset[e].fillna(dataset[e].mean())
 
-training_dataset.to_csv("treino_filtrado_outliers_media.csv", index=False)
-    
+dataset.to_csv("base_aps-failure_unsupervised-mining.csv", index=False)
