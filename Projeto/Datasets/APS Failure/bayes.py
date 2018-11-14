@@ -76,6 +76,8 @@ def run_all_knn(X, y, X_train, y_train, X_test, y_test):
     print("TN: %d \tFP: %d \nFN: %d \tTP: %d" % (tn, fp, fn, tp))
     print("Accuracy score: %f" % (accuracy_score(y_test,y_pred)))
     print("ROC auc score: %f" % (roc_auc_score(y_test,y_pred)))
+    print("RECALL score %f" % (recall_score(y_test, y_pred)))
+    print("RECALL score %f" % (recall_score(y_test, y_pred)))
     clf = GaussianNB()
     clf.fit(X,y)
     print("Cross-Validation (10-fold) score: %f" % (cross_val_score(clf, X, y, cv=10).mean()))
