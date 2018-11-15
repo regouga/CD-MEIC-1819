@@ -18,15 +18,7 @@ green_dataset = pd.read_csv("green.csv", sep=',', engine='python')
 hinselmann_dataset = pd.read_csv("hinselmann.csv", sep=',', engine='python')
 schiller_dataset = pd.read_csv("schiller.csv", sep=',', engine='python')
 
-
-
-
-
-datasets = [green_dataset, hinselmann_dataset, schiller_dataset]
-
-df = pd.DataFrame(data = green_dataset, columns = green_col)
-df.boxplot()
-
+'''
 zA = np.abs(stats.zscore(green_dataset))
 green_dataset = green_dataset[(zA < 3).all(axis=1)]
 Q1A = green_dataset.quantile(0.25)
@@ -65,9 +57,9 @@ Q1C = schiller_dataset.quantile(0.25)
 Q3C = schiller_dataset.quantile(0.75)
 IQRC = Q3C - Q1C
 schiller_dataset = schiller_dataset[((schiller_dataset < (Q1C - 1.5 * IQRC)) |(schiller_dataset > (Q3C + 1.5 * IQRC))).any(axis=1)]
+'''
 
+frames = [green_dataset, hinselmann_dataset, schiller_dataset]
 
-
-green_dataset.to_csv("base_green_classification.csv", index=False)
-hinselmann_dataset.to_csv("base_hinselmann_classification.csv", index=False)
-schiller_dataset.to_csv("base_schiller_classification.csv", index=False)
+result = pd.concat(frames)
+result.to_csv("col_classification.csv", index=False)

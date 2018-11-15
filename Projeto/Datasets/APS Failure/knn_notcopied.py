@@ -57,7 +57,7 @@ def draw_crossval_graph(res1, res2, k_values, balance):
     plt.title("precision/recall score vs k-neighbors with %s data" %(balance))
     plt.xlabel("k-neighbors")
     plt.ylabel("precision/recall score")
-    plt.gca().set_ylim([0,1])
+    plt.gca().set_ylim([0.8,1])
     plt.grid()
     
     plt.plot(k_values, precision, '.-', color="r", label="precision Non-PCA")
@@ -84,10 +84,10 @@ X_train_pca = pca.transform(X_train)
 X_test_pca = pca.transform(X_test)
 
 
-draw_crossval_graph(run_all_knn(X, y, X_train, y_train, X_test, y_test),
-                    run_all_knn(X_pca, y, X_train_pca,y_train,X_test_pca,y_test),
-                    list(range(1,k_neighbors,2)),
-                    "unbalanced")
+#draw_crossval_graph(run_all_knn(X, y, X_train, y_train, X_test, y_test),
+#                    run_all_knn(X_pca, y, X_train_pca,y_train,X_test_pca,y_test),
+#                    list(range(1,k_neighbors,2)),
+#                    "unbalanced")
 
 
 sm = SMOTE(random_state=1)
