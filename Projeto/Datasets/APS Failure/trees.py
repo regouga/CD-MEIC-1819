@@ -21,7 +21,7 @@ from math import *
 import os
 import matplotlib.pyplot as plt
 
-
+GRAPHS_FOLDER = "tree/"
 data = pd.read_csv("base_aps_failure_trainingCla.csv")
 X = np.array(data.drop("class",axis=1))
 y = np.array(data["class"])
@@ -107,11 +107,44 @@ print(accuracy, nodes, max_i)
 print("\n=================================== Min Samples Node =============================================")	
 print("\n==================================================================================================")	
 '''
-# for i in range(1,51,12):
-# 	some =""
-# 	for j in range(2, 51, 12):
-# 		some+=str(j)+","+str(i)+","+decisionTree(X, X_train, y_train, X_test, y_test, i, j)+","
-# 	print(some[:-1])
+
+
+accuracy = 0
+nodes = 0
+max_i = 0
+max_j = 0
+accuracy_vector_i = []
+accuracy_vector_j = []
+k_values = range(2,1000,500)
+for i in k_values:
+    ichanged = True
+    for j in k_values:
+        
+        res= decisionTree(X, X_train, y_train, X_test, y_test, i, j)
+        accuracy_vector_j.append(res[1])
+        if ichanged:
+            
+            accuracy_vector_i.append(res[1])
+            ichanged = False
+      
+
+f = plt.figure()
+    	
+plt.title("accuracy score")
+plt.xlabel("samples")
+plt.ylabel("accuracy score")
+plt.gca().set_ylim([0.95,1])
+plt.grid()
+
+plt.plot(k_values, accuracy_vector_i, '.-', color="r", label="min_sample_leaf")
+plt.plot(k_values, accuracy_vector_j, '.-', color="b", label="min_sample_node")
+
+	
+plt.legend(loc="center left", bbox_to_anchor=(1.04, 0.5))	
+
+f.savefig("%stree.png" % (GRAPHS_FOLDER),bbox_inches="tight")
+f.savefig("%stree.pdf" % (GRAPHS_FOLDER),bbox_inches="tight")
+
 
 
 # for i in range(101,2,-1):
@@ -119,7 +152,7 @@ print("\n=======================================================================
 
 # print(decisionTree(X, X_train, y_train, X_test, y_test, 1, 90))
 # print(decisionTree(X, X_train, y_train, X_test, y_test, 1, 50))
-
+'''
 clf = DecisionTreeClassifier()
 train_sizes,train_scores, test_scores = learning_curve(
     clf, X, y, cv=10, n_jobs=1)
@@ -146,3 +179,4 @@ plt.plot(train_sizes, test_scores_mean, 'o-', color="g",
          label="Cross-validation score")
 plt.legend(loc="best")
 plt.show()
+'''
