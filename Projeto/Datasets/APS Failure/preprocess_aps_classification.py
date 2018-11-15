@@ -11,6 +11,7 @@ from sklearn.model_selection import train_test_split
 import seaborn as sns
 from scipy import stats
 import numpy as np
+from imblearn.over_sampling import SMOTE
 
 training_dataset = pd.read_csv("aps_failure_training_set.csv", sep=',', header=14, engine='python')
 
@@ -55,6 +56,12 @@ columns = list(training_dataset.columns.values)
 for e in columns:
     training_dataset[e] = training_dataset[e].fillna(training_dataset[e].mean())
     test_dataset[e] = test_dataset[e].fillna(test_dataset[e].mean())
+
+###BALANCEAR COM SMOTE
+#sm = SMOTE(random_state=1)
+#X = np.array(training_dataset.drop("class",axis=1))
+#y = np.array(training_dataset["class"])
+#X, y = sm.fit_sample(X, y)
 
 training_dataset.to_csv("base_aps_failure_trainingCla.csv", index=False)
 test_dataset.to_csv("base_aps_failure_testCla.csv", index=False)
