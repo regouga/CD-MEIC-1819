@@ -40,22 +40,23 @@ def run_all_radfor(X, y, X_train, y_train, X_test, y_test):
     precision = []
     recall = []
     accuracy =[]
-    clf = RandomForestClassifier(n_estimators=91)
-    clf.fit(X_train,y_train)
-    y_pred = clf.predict(X_test)
-    print("\nRandomForest classifier with %d neighbors" % (91))
-    #print(classification_report(y_test,y_pred,target_names=target_names))
-    tn, fp, fn, tp = confusion_matrix(y_test,y_pred, labels=range(2)).ravel()
-    print("TN: %d \tFP: %d \nFN: %d \tTP: %d" % (tn, fp, fn, tp))
-    print("Accuracy score: %f" % (accuracy_score(y_test,y_pred)))
-    print("ROC auc score: %f" % (roc_auc_score(y_test,y_pred)))
-    clf = RandomForestClassifier(n_estimators=91)
-    clf.fit(X,y)
-    #print("Cross-Validation (10-fold) score: %f" % (cross_val_score(clf, X, y, cv=10).mean()))
-    #cross_val_vector.append(cross_val_score(clf, X, y, cv=10).mean())
-    precision.append(tp/(tp+fp))
-    recall.append(tp/(tp+fn))
-    accuracy.append((tp+tn)/(tp+fp+fn+tn))
+    for n in range(1,k_neighbors,5):
+        clf = RandomForestClassifier(n_estimators=n)
+        clf.fit(X_train,y_train)
+        y_pred = clf.predict(X_test)
+        print("\nRandomForest classifier with %d neighbors" % (n))
+        #print(classification_report(y_test,y_pred,target_names=target_names))
+        tn, fp, fn, tp = confusion_matrix(y_test,y_pred, labels=range(2)).ravel()
+        print("TN: %d \tFP: %d \nFN: %d \tTP: %d" % (tn, fp, fn, tp))
+        print("Accuracy score: %f" % (accuracy_score(y_test,y_pred)))
+        print("ROC auc score: %f" % (roc_auc_score(y_test,y_pred)))
+        clf = RandomForestClassifier(n_estimators=n)
+        clf.fit(X,y)
+        #print("Cross-Validation (10-fold) score: %f" % (cross_val_score(clf, X, y, cv=10).mean()))
+        #cross_val_vector.append(cross_val_score(clf, X, y, cv=10).mean())
+        precision.append(tp/(tp+fp))
+        recall.append(tp/(tp+fn))
+        accuracy.append((tp+tn)/(tp+fp+fn+tn))
     return (cross_val_vector, precision, recall, accuracy)
 
 
@@ -93,17 +94,19 @@ test = pd.read_csv("base_aps_failure_testCla.csv")
 df_tr = pd.DataFrame(training)
 df_te = pd.DataFrame(test)
 
-#X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.3,random_state=0, stratify=y)
+X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.3,random_state=0, stratify=y)
 
 
-X_train = df_tr.iloc[:, 1:171] # Features
-y_train = df_tr.iloc[:, 0]  # Labels
+#X_train = df_tr.iloc[:, 1:171] # Features
+#y_train = df_tr.iloc[:, 0]  # Labels
 
-X_test = df_te.iloc[:, 1:171]
-y_test = df_te.iloc[:, 0]
+#X_test = df_te.iloc[:, 1:171]
+#y_test = df_te.iloc[:, 0]
 
 
-draw_crossval_graph(run_all_radfor(X, y, X_train, y_train, X_test, y_test), 91, "unbalanced")
+draw_crossval_graph(run_all_radfor(X, y, X_train, y_train, X_test, y_test),
+                    list(range(1,k_neighbors,5)),
+                    "unbalanced")
 
 #Create a Gaussian Classifier
 #clf=RandomForestClassifier(n_estimators=1000)
