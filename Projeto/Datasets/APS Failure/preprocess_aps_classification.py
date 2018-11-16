@@ -29,7 +29,7 @@ training_dataset = training_dataset.replace('na', -1)
 test_dataset = test_dataset.replace('na', -1)
 training_dataset = training_dataset.apply(pd.to_numeric)
 test_dataset = test_dataset.apply(pd.to_numeric)
-
+'''
 z1 = np.abs(stats.zscore(training_dataset))
 z2 = np.abs(stats.zscore(test_dataset))
 
@@ -46,7 +46,7 @@ IQR1 = Q33 - Q11
 
 training_dataset = training_dataset[((training_dataset < (Q1 - 1.5 * IQR)) |(training_dataset > (Q3 + 1.5 * IQR))).any(axis=1)]
 test_dataset = test_dataset[((test_dataset < (Q11 - 1.5 * IQR1)) |(test_dataset > (Q33 + 1.5 * IQR1))).any(axis=1)]
-
+'''
 training_dataset = training_dataset.replace(-1, np.nan)
 test_dataset = test_dataset.replace(-1, np.nan)
 
