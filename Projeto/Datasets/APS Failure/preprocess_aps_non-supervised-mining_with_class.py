@@ -20,7 +20,8 @@ test_dataset = pd.read_csv("aps_failure_test_set.csv", sep=',', header=14, engin
 
 dataset = training_dataset.append(test_dataset)
 
-dataset = dataset.drop('class', axis=1)
+dataset = dataset.replace('neg', 0)
+dataset = dataset.replace('pos', 1)
 
 dataset = dataset.replace('na', -1)
 
@@ -53,11 +54,5 @@ print(columns)
 for e in columns:
     print(e, dataset[e].mean())
     dataset[e] = dataset[e].fillna(dataset[e].mean())
-    
 
-for i in range(10):
-	sample = dataset.sample(frac=0.1,replace=False)
-	filename = "base_aps-failure/base_aps-failure_unsupervised-mining_sample_" + str(i) + ".csv"
-	sample.to_csv(filename, index=False)
-
-#dataset.to_csv("base_aps-failure_unsupervised-mining.csv", index=False)
+dataset.to_csv("base_aps-failure_unsupervised-mining_with_class.csv", index=False)

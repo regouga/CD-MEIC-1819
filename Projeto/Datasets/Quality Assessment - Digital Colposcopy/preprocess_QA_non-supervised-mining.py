@@ -15,11 +15,12 @@ hinselmann_dataset = pd.read_csv("hinselmann.csv", sep=',', engine='python')
 schiller_dataset = pd.read_csv("schiller.csv", sep=',', engine='python')
 
 
-for i in drops:
-    green_dataset = green_dataset.drop(i, axis=1)
-    hinselmann_dataset = hinselmann_dataset.drop(i, axis=1)
-    schiller_dataset = schiller_dataset.drop(i, axis=1)
+dataset = green_dataset.append(hinselmann_dataset)
+dataset = dataset.append(schiller_dataset)
 
-green_dataset.to_csv("base_QA-Green_unsupervised-mining.csv", index=False)
-hinselmann_dataset.to_csv("base_QA-hinselmann_unsupervised-mining.csv", index=False)
-schiller_dataset.to_csv("base_QA-schiller_unsupervised-mining.csv", index=False)
+
+for i in drops:
+    dataset = dataset.drop(i, axis=1)
+
+
+dataset.to_csv("base_QA_unsupervised-mining.csv", index=False)
