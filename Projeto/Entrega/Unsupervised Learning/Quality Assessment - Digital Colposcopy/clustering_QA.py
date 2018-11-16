@@ -5,15 +5,12 @@ Created on Wed Nov 14 21:37:32 2018
 @author: João Pina
 """
 
-
-import numpy as np            # Data manipulation
-import pandas as pd           # Dataframe manipulatio 
+import pandas as pd 
 import matplotlib.pyplot as plt  
-from sklearn.preprocessing import StandardScaler  # For scaling dataset
+from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from sklearn.metrics import davies_bouldin_score
-from sklearn.metrics import calinski_harabaz_score
 from sklearn.decomposition import PCA
 from matplotlib import style
 style.use("ggplot")
@@ -49,8 +46,8 @@ for i in range(2,11):
     labels = kmeans.labels_
     kmeansLabels = pd.DataFrame(labels)
     
-    print(centroids)
-    print(labels)
+    #print(centroids)
+    #print(labels)
     
     if(silhouette_score(dataset, labels) > best_score_silhouette):
         best_score_silhouette = silhouette_score(dataset, labels)
