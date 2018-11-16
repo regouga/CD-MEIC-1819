@@ -106,7 +106,7 @@ def run_all_knn(X, y, X_train, y_train, X_test, y_test):
     clf.fit(X_train,y_train)
     y_pred = clf.predict(X_test)
     print("\nKNN classifier with %d neighbors" % (n))
-    #tn, fp, fn, tp = confusion_matrix(y_test,y_pred, labels=range(2)).ravel()
+    tn, fp, fn, tp = confusion_matrix(y_test,y_pred, labels=range(2)).ravel()
     print("TN: %d \tFP: %d \nFN: %d \tTP: %d" % (tn, fp, fn, tp))
     print("Accuracy score: %f" % (accuracy_score(y_test,y_pred)))
     print("ROC auc score: %f" % (roc_auc_score(y_test,y_pred)))
@@ -116,8 +116,8 @@ def run_all_knn(X, y, X_train, y_train, X_test, y_test):
     #cross_val_vector.append(cross_val_score(clf, X, y, cv=10).mean())
     
     return (cross_val_vector, 
-            precision_score(y_test, y_pred, labels=labels, pos_label=1, average=’binary’, sample_weight=None)[source],
-            recall_score(y_test, y_pred, labels=labels, pos_label=1, average=’binary’, sample_weight=None))
+            precision_score(y_test, y_pred, labels=labels, pos_label=1, average='binary', sample_weight=None)[source],
+            recall_score(y_test, y_pred, labels=labels, pos_label=1, average='binary', sample_weight=None))
 
 def draw_graph(res1, res2, k_values, balance):
     #cross_val_vector = res1[0]

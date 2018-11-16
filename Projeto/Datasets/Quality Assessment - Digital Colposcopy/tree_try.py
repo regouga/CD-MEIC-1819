@@ -54,7 +54,7 @@ X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.3,random_sta
 
 
 def decisionTree(X_train, y_train, X_test, y_test, min_sample_leaf, min_samples_split):	
-    clf = DecisionTreeClassifier(min_samples_leaf =min_sample_leaf, min_samples_split=min_samples_split)    
+    clf = DecisionTreeClassifier(min_samples_leaf =min_sample_leaf, min_samples_split=min_samples_split, random_state=0)    
     clf = clf.fit(X_train,y_train)
     y_pred = clf.predict(X_test)
     print("accuracy:", accuracy_score(y_test,y_pred))
