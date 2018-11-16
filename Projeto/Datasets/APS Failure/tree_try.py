@@ -12,6 +12,9 @@ import graphviz
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import tree
 from sklearn.metrics import accuracy_score
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2
+
 data = pd.read_csv("base_aps_failure_trainingCla.csv")
 X = np.array(data.drop("class",axis=1))
 y = np.array(data["class"])
@@ -22,6 +25,11 @@ print(feature_names)
 teste = pd.read_csv("base_aps_failure_testCla.csv")
 X_test = np.array(data.drop("class",axis=1))
 y_test = np.array(data["class"])
+
+print(X.shape)
+
+X = SelectKBest(chi2, k=2).fit_transform(X, y)
+print(X_new.shape)
 
 # split dataset into training/test portions
 
