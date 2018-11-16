@@ -8,31 +8,43 @@ Created on Thu Nov 15 22:11:32 2018
 
 import pandas as pd
 import numpy as np
-import graphviz 
+#import graphviz 
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import tree
 from sklearn.metrics import accuracy_score
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
+from sklearn.model_selection import train_test_split
+from feature_selector import FeatureSelector
 
 data = pd.read_csv("base_aps_failure_trainingCla.csv")
 X = np.array(data.drop("class",axis=1))
 y = np.array(data["class"])
 target_names = np.array(['0','1'])
-#feature_names = data.axes[1][1:]
 feature_names = list(data)[1:]
 print(feature_names)
-teste = pd.read_csv("base_aps_failure_testCla.csv")
-X_test = np.array(data.drop("class",axis=1))
-y_test = np.array(data["class"])
+# Features are in train and labels are in train_labels
+fs = FeatureSelector(data = data, labels = feature_names)
+
+fs.identify_all(selection_params = {'missing_threshold': 0.6,    
+                                    'correlation_threshold': 0.98, 
+                                    'task': 'classification',    
+                                    'eval_metric': 'auc', 
+                                    'cumulative_importance': 0.99})
+#feature_names = data.axes[1][1:]
+
+#teste = pd.read_csv("base_aps_failure_testCla.csv")
+#X_test = np.array(data.drop("class",axis=1))
+#y_test = np.array(data["class"])
 
 print(X.shape)
 
 X = SelectKBest(chi2, k=2).fit_transform(X, y)
-print(X_new.shape)
-
+print(X.shape)
+feature_names = list(X)[0]
+print(X.support_)
 # split dataset into training/test portions
-
+X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.3,random_state=0, stratify=y)
 
 
 def decisionTree(X, X_train, y_train, X_test, y_test, min_sample_leaf, min_sample_node):
