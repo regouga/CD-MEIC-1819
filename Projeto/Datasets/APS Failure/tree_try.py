@@ -15,34 +15,77 @@ from sklearn.metrics import accuracy_score
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
 from sklearn.model_selection import train_test_split
-from feature_selector import FeatureSelector
-
+from sklearn.feature_selection import SelectFromModel
+from sklearn.linear_model import LassoCV
+from sklearn.feature_selection import SelectPercentile
+import matplotlib.pyplot as plt
 data = pd.read_csv("base_aps_failure_trainingCla.csv")
 X = np.array(data.drop("class",axis=1))
 y = np.array(data["class"])
 target_names = np.array(['0','1'])
 feature_names = list(data)[1:]
-print(feature_names)
-# Features are in train and labels are in train_labels
-fs = FeatureSelector(data = data, labels = feature_names)
+#print(feature_names)
 
-fs.identify_all(selection_params = {'missing_threshold': 0.6,    
-                                    'correlation_threshold': 0.98, 
-                                    'task': 'classification',    
-                                    'eval_metric': 'auc', 
-                                    'cumulative_importance': 0.99})
+
+
+from sklearn.ensemble import ExtraTreesClassifier
+from sklearn.datasets import load_iris
+from sklearn.feature_selection import SelectFromModel
+
+print(X.shape)
+clf = ExtraTreesClassifier()
+clf = clf.fit(X, y)
+print(clf.feature_importances_  )
+print("Feature ranking:")
+
+importances = clf.feature_importances_
+
+std = np.std([tree.feature_importances_ for tree in clf.estimators_],
+             axis=0)
+indices = np.argsort(importances)[::-1]
+new_features = []
+for i in indices:
+    new_features += [feature_names[i]]
+feature_names = new_features
+
+'''
+for f in range(X.shape[1]):
+    print("%d. feature %d (%f)" % (f + 1, indices[f], importances[indices[f]]))
+
+# Plot the feature importances of the forest
+plt.figure()
+plt.title("Feature importances")
+plt.bar(range(X.shape[1]), importances[indices],
+       color="r", yerr=std[indices], align="center")
+plt.xticks(range(X.shape[1]), indices)
+plt.xlim([0, X.shape[1]])
+plt.ylim([0, 0.3])
+plt.show()
+
+model = SelectFromModel(clf, prefit=True)
+X = model.transform(X)
+print(X.shape)    
+'''
+'''
+clf = ExtraTreesClassifier()
+clf = clf.fit(X, y)
+idx = np.arange(0, X.shape[1])
+importances = clf.feature_importances_
+features_to_keep = idx[importances > np.mean(importances)]
+ 
+X_cols = X.iloc[:,features_to_keep]
+model = SelectFromModel(clf, prefit=True)
+X = model.transform(X)
+dataset = pd.DataFrame(X)
+dataset.columns = X_cols.columns
+'''
 #feature_names = data.axes[1][1:]
 
 #teste = pd.read_csv("base_aps_failure_testCla.csv")
 #X_test = np.array(data.drop("class",axis=1))
 #y_test = np.array(data["class"])
 
-print(X.shape)
 
-X = SelectKBest(chi2, k=2).fit_transform(X, y)
-print(X.shape)
-feature_names = list(X)[0]
-print(X.support_)
 # split dataset into training/test portions
 X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.3,random_state=0, stratify=y)
 
