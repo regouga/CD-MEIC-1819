@@ -11,14 +11,11 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from sklearn.metrics import davies_bouldin_score
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
 
 
 from matplotlib import style
 style.use("ggplot")
 
-pca = PCA(n_components=2)
 
 best_centroids_for_silhouette = []
 best_centroids_for_davies_bouldin = []
@@ -28,10 +25,6 @@ best_davies_bouldin_scores=[]
 for i in range(0,10):
     fileName = "base_aps-failure/base_aps-failure_unsupervised-mining_sample_" + str(i) + ".csv"
     dataset = pd.read_csv(fileName, sep=',', engine='python')
-    
-    dataset = StandardScaler().fit_transform(dataset)
-    principalComponents = pca.fit_transform(dataset)
-    dataset = pd.DataFrame(data = principalComponents, columns = ['pc1', 'pc2'])
     
     best_centroids_silhouette = 0
     best_score_silhouette = 0
@@ -45,7 +38,7 @@ for i in range(0,10):
     
     for i in range(2,11):
         centroid_count += [i]
-        print("Number of centroids: ", i)
+        #print("Number of centroids: ", i)
         kmeans = KMeans(n_clusters=i)
         kmeans.fit(dataset)
         
@@ -66,14 +59,6 @@ for i in range(0,10):
         davies_bouldin_scores += [davies_bouldin_score(dataset, labels)]
         print("Silhouette Score = ", silhouette_score(dataset, labels))
         print("Davies-Bouldin Score = ", davies_bouldin_score(dataset, labels))
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        scatter = ax.scatter(dataset['pc1'],dataset['pc2'], c=kmeansLabels[0],s=50)
-        ax.set_title('K-Means Clustering')
-        ax.set_xlabel('pc1')
-        ax.set_ylabel('pc2')
-        plt.colorbar(scatter)
-        plt.show()
     
     print("----------------------------------------------------------------")
     print("Best number of centroids for Silhouette: ", best_centroids_silhouette)
@@ -86,8 +71,6 @@ for i in range(0,10):
     print("Best score for Davies-Bouldin: ", best_score_davies_bouldin)
     best_davies_bouldin_scores += [best_score_davies_bouldin]
      
-    
-    
     
     plt.plot(centroid_count, silhouette_scores)
     plt.xlabel('Centroids')

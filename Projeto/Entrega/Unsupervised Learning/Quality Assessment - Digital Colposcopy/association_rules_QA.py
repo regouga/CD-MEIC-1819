@@ -13,10 +13,7 @@ import matplotlib.pyplot as plt
 dataset = pd.read_csv("base_QA_unsupervised-mining.csv", sep=',', engine='python')
 dataset.head()
 
-dataset.info()
-
-for col in list(dataset) :
-    print(col)
+for col in list(dataset):
     dataset[col] = pd.cut(dataset[col],9,labels=['0','1','2','3','4','5','6','7','8'])
     attrs = []
     values = dataset[col].unique()
@@ -35,7 +32,6 @@ support = [0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 
 nr_regras = []
 lifts=[]
-lifts_top=[]
 
 
 for i in support:
@@ -46,12 +42,7 @@ for i in support:
     rules.to_csv(fileName, index=False)
     nr_regras = nr_regras + [len(rules)]
     lifts += [rules.lift.mean()]
-    rules = rules.sort_values(by='lift', ascending=False)
-    rules = rules.head(10)
-    print(rules)
-    lifts_top += [rules.lift.mean()]
     
-print(lifts_top)
 
 nr_regras_9 = [108922, 8280, 162, 0, 0, 0, 0]
 nr_regras_10 = [63689, 6524, 18, 0, 0, 0, 0]
@@ -66,12 +57,6 @@ plt.show()
 lifts_9 = [1.722469299454125, 1.6499519268970273, 1.5790493347758952, 0, 0, 0, 0]
 lifts_10 = [1.812976664084475, 1.7022643152957304, 1.6654258039919125, 0, 0, 0, 0]
 lifts_11 = [1.7321760474569865, 1.7688167366120544, 0, 0, 0, 0, 0]
-
-
-lifts_top_9 =[2.1556480999479435, 1.962782390967049, 1.6728367858556539, 0, 0, 0, 0] 
-lifts_top_10=[2.350088475658144, 1.9480174784555924, 1.687052312834945, 0, 0, 0, 0]
-lifts_top_11=[2.1483747227704644, 1.9348050939584915, 0, 0, 0, 0, 0]
-
 
 
 plt.plot(support, nr_regras_9, '.-', color="r", label="9 bins")
@@ -91,15 +76,5 @@ plt.legend(loc="center left", bbox_to_anchor=(1.04, 0.5))
 plt.xlabel('Support')
 plt.ylabel('Lift')
 plt.title('Variação do Lift com o support - Quality Assurance Dataset')
-plt.show()
-
-plt.plot(support, lifts_top_9, '.-', color="r", label="9 bins")
-plt.plot(support, lifts_top_10, '.-', color="b", label="10 bins")
-plt.plot(support, lifts_top_11, '.-', color="c", label="11 bins")
-plt.legend(loc="center left", bbox_to_anchor=(1.04, 0.5))	
-plt.xlabel('Support')
-plt.ylabel('Top 10 lifts mean')
-plt.title('Variação do Lift (Top 10) com o support - Quality Assurance Dataset')
-plt.show()
-        
+plt.show()        
     
