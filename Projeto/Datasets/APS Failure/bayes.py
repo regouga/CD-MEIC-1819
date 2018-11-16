@@ -14,12 +14,15 @@ import seaborn as sns
 
 GRAPHS_FOLDER = "bayes_graphs/"
 data = pd.read_csv("base_aps_failure_trainingCla.csv")
-X = np.array(data.drop("class",axis=1))
-y = np.array(data["class"])
+X_train = np.array(data.drop("class",axis=1))
+y_train = np.array(data["class"])
 target_names = np.array(["0","1"])
 
+res = pd.read_csv("base_aps_failure_testCla.csv")
+X_test = np.array(res.drop("class",axis=1))
+y_test = np.array(res["class"])
 # split dataset into training/test portions
-X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.3,random_state=0)
+#X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.3,random_state=0)
 
 # PCA part
 pca = PCA(n_components=2).fit(X)
@@ -157,8 +160,8 @@ def run_pca_knn():
 def draw_all_learning_curves():
     draw_learning_curve(X,y,X_pca,"default")
 
-yaxis = [run_non_pca_knn(),run_pca_knn()]
-x = ["non_pca", "pca"]
+yaxis = [run_pca_knn()]
+x = ["pca"]
 width = 1/1.5
 plt.bar(x, yaxis, width, color="blue")
 plt.title("accuracy")
