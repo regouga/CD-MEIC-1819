@@ -35,18 +35,13 @@ from sklearn.feature_selection import SelectFromModel
 print(X.shape)
 clf = ExtraTreesClassifier()
 clf = clf.fit(X, y)
-print(clf.feature_importances_  )
-print("Feature ranking:")
+
 
 importances = clf.feature_importances_
 
 std = np.std([tree.feature_importances_ for tree in clf.estimators_],
              axis=0)
 indices = np.argsort(importances)[::-1]
-new_features = []
-for i in indices:
-    new_features += [feature_names[i]]
-feature_names = new_features
 
 '''
 for f in range(X.shape[1]):
@@ -61,11 +56,20 @@ plt.xticks(range(X.shape[1]), indices)
 plt.xlim([0, X.shape[1]])
 plt.ylim([0, 0.3])
 plt.show()
-
+'''
 model = SelectFromModel(clf, prefit=True)
 X = model.transform(X)
-print(X.shape)    
-'''
+print(X.shape[1])   
+
+new_features = []
+for i in indices[:X.shape[1]]:
+    new_features += [feature_names[i]]
+    
+print(new_features)
+print(len(new_features)) 
+feature_names = new_features
+#feature_names = list(X)
+#print(feature_names)
 '''
 clf = ExtraTreesClassifier()
 clf = clf.fit(X, y)
