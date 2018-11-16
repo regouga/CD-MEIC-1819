@@ -107,6 +107,7 @@ def run_all_bayes(X, y, X_train, y_train, X_test, y_test, option):
         gnb = BernoulliNB()
     gnb.fit(X,y)
     print("Cross-Validation (10-fold) score: %f" % (cross_val_score(gnb, X, y, cv=10).mean()))
+    return accuracy_score(y_test,y_pred)
 
 def draw_learning_curve(X, y, X_pca, filename):
     clf = GaussianNB()
@@ -147,21 +148,26 @@ def draw_learning_curve(X, y, X_pca, filename):
     f.savefig(GRAPHS_FOLDER+"lc_bayes_"+filename+".pdf",bbox_inches="tight")
 
 def run_non_pca_knn():  
-    print("\n================= Basic Non-PCA =============================")
-    run_all_bayes(X, y, X_train, y_train, X_test, y_test, "GaussianNB")
-    print("===============================================================")
+    return run_all_bayes(X, y, X_train, y_train, X_test, y_test, "GaussianNB")
 
 
 def run_pca_knn():
-    print("\n================ Basic PCA executions =======================")
-    run_all_bayes(X_pca, y, X_train_pca,y_train,X_test_pca,y_test,"GaussianNB")
-    print("===============================================================")
+    return run_all_bayes(X_pca, y, X_train_pca,y_train,X_test_pca,y_test,"GaussianNB")
 
 def draw_all_learning_curves():
     draw_learning_curve(X,y,X_pca,"default")
 
-run_non_pca_knn()
-run_pca_knn()
+yaxis = [run_non_pca_knn(),run_pca_knn()]
+x = ["non_pca", "pca"]
+width = 1/1.5
+plt.bar(x, yaxis, width, color="blue")
+plt.title("accuracy")
+plt.gca().set_ylim([0.9,1])
+plt.xlabel("accuracy score")
+plt.ylabel("gaussian Naive Bayes")
+fig = plt.gcf()
+plotly_fig = tls.mpl_to_plotly(fig)
+py.iplot(plotly_fig, filename='mpl-basic-bar')
 #draw_all_learning_curves()
 
 '''
