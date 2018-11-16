@@ -100,9 +100,9 @@ def decisionTree(X, X_train, y_train, X_test, y_test, min_sample_leaf, min_sampl
     
     clf = clf.fit(X_train,y_train)
     y_pred = clf.predict(X_test)
-    dot_data = tree.export_graphviz(clf, out_file=None,feature_names=feature_names,class_names=target_names,  filled=True, rounded=True, special_characters=True)
-    graph = graphviz.Source(dot_data)
-    graph.render("dnmkc", view=True)
+    #dot_data = tree.export_graphviz(clf, out_file=None,feature_names=feature_names,class_names=target_names,  filled=True, rounded=True, special_characters=True)
+    #graph = graphviz.Source(dot_data)
+    #graph.render("dnmkc", view=True)
     treeObj = clf.tree_
     print(treeObj.node_count, accuracy_score(y_test,y_pred))
     #return str(treeObj.node_count) +","+ str(accuracy_score(y_test,y_pred))
